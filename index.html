@@ -293,18 +293,22 @@
           <div class="reading-card reading-card--chart">
             <div class="reading-stats">
               <div class="reading-stat">
-                <span class="reading-stat__value" id="reading-total">—</span>
-                <span class="reading-stat__label"><span class="i18n-es">Libros en 2026</span><span class="i18n-en">Books in 2026</span></span>
+                <span class="reading-stat__value" id="reading-total">65</span>
+                <span class="reading-stat__label"><span class="i18n-es">Libros leídos</span><span class="i18n-en">Books read</span></span>
               </div>
               <div class="reading-stat">
-                <span class="reading-stat__value reading-stat__value--small">Data Science for Business</span>
-                <span class="reading-stat__label"><span class="i18n-es">Último libro</span><span class="i18n-en">Last book</span></span>
+                <span class="reading-stat__value" id="reading-toread">54</span>
+                <span class="reading-stat__label"><span class="i18n-es">Pendientes</span><span class="i18n-en">To read</span></span>
+              </div>
+              <div class="reading-stat">
+                <span class="reading-stat__value reading-stat__value--small">Tress of the Emerald Sea</span>
+                <span class="reading-stat__label"><span class="i18n-es">Leyendo ahora</span><span class="i18n-en">Currently reading</span></span>
               </div>
             </div>
             <div id="reading-chart"></div>
             <p class="reading-note">
-              <span class="i18n-es">* Datos de ejemplo — reemplázalos por tus lecturas reales en el script del final del archivo.</span>
-              <span class="i18n-en">* Sample data — replace with your real reading data in the script at the end of the file.</span>
+              <span class="i18n-es">* Datos generados a partir de tu goodreads_library_export.csv (exportado 15/08/2026). Vuelve a exportarlo desde Goodreads cuando quieras actualizarlo y te regenero el bloque.</span>
+              <span class="i18n-en">* Data generated from your goodreads_library_export.csv (exported 08/15/2026). Re-export it from Goodreads whenever you want an update.</span>
             </p>
           </div>
         </div>
@@ -315,51 +319,33 @@
 
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
     <script>
-      // ---- DATOS DE LECTURA: edita este bloque con tus lecturas reales ----
-      var readingData = {
-        months: ["Ene", "Feb", "Mar", "Abr", "May", "Jun"],
-        books: [2, 3, 1, 2, 4, 3],
-        category: ["Negocios", "Datos", "Datos", "Ficción", "Negocios", "Deportes"]
-      };
-      var categoryColors = {
-        "Negocios": "#e8a33d",
-        "Datos": "#7fbfa5",
-        "Ficción": "#d97b6c",
-        "Deportes": "#3fae6a"
+      // ---- DATOS DE LECTURA: generados desde goodreads_library_export.csv (15/08/2026) ----
+      // Vuelve a exportar tu librería en Goodreads > My Books > Import/Export para actualizar estos números.
+      var topAuthors = {
+        names: ["Brandon Sanderson", "Sam Feuerbach", "Patrick Rothfuss", "Sarah J. Maas", "Rebecca Yarros"],
+        books: [33, 8, 7, 6, 4]
       };
       // ---- fin de datos editables ----
 
-      document.getElementById("reading-total").textContent =
-        readingData.books.reduce(function (a, b) { return a + b; }, 0);
-
-      var categories = readingData.category.filter(function (c, i, arr) {
-        return arr.indexOf(c) === i;
-      });
-
-      var traces = categories.map(function (cat) {
-        return {
-          x: readingData.months,
-          y: readingData.months.map(function (_, i) {
-            return readingData.category[i] === cat ? readingData.books[i] : null;
-          }),
-          name: cat,
-          type: "bar",
-          marker: { color: categoryColors[cat] || "#9fb3b8" }
-        };
-      });
-
       Plotly.newPlot(
         "reading-chart",
-        traces,
+        [
+          {
+            x: topAuthors.books,
+            y: topAuthors.names,
+            type: "bar",
+            orientation: "h",
+            marker: { color: "#e8a33d" }
+          }
+        ],
         {
-          barmode: "stack",
+          title: { text: "Autores más leídos", font: { size: 12, color: "#f2efe6" } },
           paper_bgcolor: "transparent",
           plot_bgcolor: "transparent",
           font: { color: "#f2efe6", family: "JetBrains Mono, monospace", size: 11 },
-          margin: { t: 10, r: 10, l: 30, b: 30 },
-          legend: { orientation: "h", y: -0.25 },
+          margin: { t: 30, r: 10, l: 130, b: 30 },
           xaxis: { gridcolor: "rgba(242,239,230,0.05)" },
-          yaxis: { gridcolor: "rgba(242,239,230,0.05)" }
+          yaxis: { autorange: "reversed" }
         },
         { displayModeBar: false, responsive: true }
       );
