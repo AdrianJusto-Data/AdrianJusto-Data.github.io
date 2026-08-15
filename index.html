@@ -266,9 +266,104 @@
         </section>
       </div>
 
+      <!-- FILA COMPLETA: Lectura en vivo -->
+      <section class="block block--wide" aria-labelledby="reading-title">
+        <h2 id="reading-title" class="block__title">
+          <span class="i18n-es">Lectura en Vivo</span><span class="i18n-en">Live Reading</span>
+        </h2>
+        <p class="summary" style="margin-bottom: 18px;">
+          <span class="i18n-es">Automatizado mediante el widget de Goodreads. Muestra mis lecturas actuales y progreso anual.</span>
+          <span class="i18n-en">Powered by the Goodreads widget. Shows my current reads and yearly progress.</span>
+        </p>
+
+        <div class="reading-row">
+          <!-- Widget oficial de Goodreads -->
+          <div class="reading-card">
+            <div id="gr_challenge_progress_body_11680" style="font-size: 13px; line-height: 18px;">
+              <h3 style="margin: 4px 0 10px; font-weight: bold; text-align: center; color: var(--accent-mint); font-family: 'Space Grotesk', sans-serif;">
+                <a style="text-decoration: none; color: var(--accent-mint);" rel="nofollow" href="https://www.goodreads.com/challenges/11680-2026-reading-challenge">→ 2026 Reading Challenge</a>
+              </h3>
+              <span style="color: var(--text-muted);">Usuario:</span>
+              <a style="color: var(--accent-mint); text-decoration: none;" rel="nofollow" href="https://www.goodreads.com/user/show/181924920-adrian-justo">Adrian</a><br/><br/>
+            </div>
+            <script src="https://www.goodreads.com/user_challenges/widget/181924920-adrian-justo?challenge_id=11680&v=2"></script>
+          </div>
+
+          <!-- Gráfica de progreso (JS puro, sin servidor) -->
+          <div class="reading-card reading-card--chart">
+            <div class="reading-stats">
+              <div class="reading-stat">
+                <span class="reading-stat__value" id="reading-total">—</span>
+                <span class="reading-stat__label"><span class="i18n-es">Libros en 2026</span><span class="i18n-en">Books in 2026</span></span>
+              </div>
+              <div class="reading-stat">
+                <span class="reading-stat__value reading-stat__value--small">Data Science for Business</span>
+                <span class="reading-stat__label"><span class="i18n-es">Último libro</span><span class="i18n-en">Last book</span></span>
+              </div>
+            </div>
+            <div id="reading-chart"></div>
+            <p class="reading-note">
+              <span class="i18n-es">* Datos de ejemplo — reemplázalos por tus lecturas reales en el script del final del archivo.</span>
+              <span class="i18n-en">* Sample data — replace with your real reading data in the script at the end of the file.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
       <footer class="footer">© 2026 Adrian Justo</footer>
     </main>
 
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <script>
+      // ---- DATOS DE LECTURA: edita este bloque con tus lecturas reales ----
+      var readingData = {
+        months: ["Ene", "Feb", "Mar", "Abr", "May", "Jun"],
+        books: [2, 3, 1, 2, 4, 3],
+        category: ["Negocios", "Datos", "Datos", "Ficción", "Negocios", "Deportes"]
+      };
+      var categoryColors = {
+        "Negocios": "#e8a33d",
+        "Datos": "#7fbfa5",
+        "Ficción": "#d97b6c",
+        "Deportes": "#3fae6a"
+      };
+      // ---- fin de datos editables ----
+
+      document.getElementById("reading-total").textContent =
+        readingData.books.reduce(function (a, b) { return a + b; }, 0);
+
+      var categories = readingData.category.filter(function (c, i, arr) {
+        return arr.indexOf(c) === i;
+      });
+
+      var traces = categories.map(function (cat) {
+        return {
+          x: readingData.months,
+          y: readingData.months.map(function (_, i) {
+            return readingData.category[i] === cat ? readingData.books[i] : null;
+          }),
+          name: cat,
+          type: "bar",
+          marker: { color: categoryColors[cat] || "#9fb3b8" }
+        };
+      });
+
+      Plotly.newPlot(
+        "reading-chart",
+        traces,
+        {
+          barmode: "stack",
+          paper_bgcolor: "transparent",
+          plot_bgcolor: "transparent",
+          font: { color: "#f2efe6", family: "JetBrains Mono, monospace", size: 11 },
+          margin: { t: 10, r: 10, l: 30, b: 30 },
+          legend: { orientation: "h", y: -0.25 },
+          xaxis: { gridcolor: "rgba(242,239,230,0.05)" },
+          yaxis: { gridcolor: "rgba(242,239,230,0.05)" }
+        },
+        { displayModeBar: false, responsive: true }
+      );
+    </script>
     <script>
       document.querySelectorAll('.lang-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
