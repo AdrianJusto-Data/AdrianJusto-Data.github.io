@@ -163,6 +163,34 @@ body {
   margin: 0 0 14px;
 }
 
+.summary {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.skill-group {
+  margin-bottom: 18px;
+}
+
+.skill-group:last-child {
+  margin-bottom: 0;
+}
+
+.skill-group__label {
+  margin: 0 0 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent-mint);
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .pill-row,
 .doc-row {
   display: flex;
